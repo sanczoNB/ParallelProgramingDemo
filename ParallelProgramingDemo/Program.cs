@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace ParallelProgramingDemo
 {
@@ -22,10 +23,7 @@ namespace ParallelProgramingDemo
 
             for (int repeat = 0; repeat < repeatNumber; repeat++)
             {
-                for (int i = 0; i < tab.Length; i++)
-                {
-                    result[i] = Count(tab[i]);
-                }
+                Parallel.For(0, tab.Length, i => result[i] = Count(tab[i]));
             }
             int stop = System.Environment.TickCount;
             Console.WriteLine("Obliczenia sekwenkcyjne trwały {0} ms.", stop - start);
