@@ -12,13 +12,20 @@ namespace ParallelProgramingDemo
                 (arg) =>
                 {
                     Console.WriteLine("Początek działania akcji - " + arg);
-                    System.Threading.Thread.Sleep(5000); // opóźnienie 0.5s
+                    System.Threading.Thread.Sleep(2000); // opóźnienie 2s
                     Console.WriteLine("Koniec działania akcji - " + arg.ToString());
                     return DateTime.Now.Ticks;
                 };
 
-            var result = action("synchronicznie");
-            Console.WriteLine("Synchronicznie: " + result);
+            //w osobnym zadaniu
+            Task<long> task = new Task<long>(action, "żądanie");
+            task.Start();
+            Console.WriteLine("Akcja została uruchomiona");
+            //właściwość Result czeka ze zwróceniem wartości, aż zadanie zostanie zakończone
+            //(synchronizacja)
+            long result = task.Result;
+            Console.WriteLine("Zadanie: " + result);
+
             Console.ReadKey();
         }
 
