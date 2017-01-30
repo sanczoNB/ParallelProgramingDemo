@@ -7,44 +7,18 @@ namespace ParallelProgramingDemo
     {
         static void Main(string[] args)
         {
-            var r = new Random();
-            var suma = 0L;
-            var counter = 0L;
-            var s = "";
+            //czynność
+            Func<object, long> action =
+                (arg) =>
+                {
+                    Console.WriteLine("Początek działania akcji - " + arg);
+                    System.Threading.Thread.Sleep(5000); // opóźnienie 0.5s
+                    Console.WriteLine("Koniec działania akcji - " + arg.ToString());
+                    return DateTime.Now.Ticks;
+                };
 
-            //iteracje zostaną wykonane tylko dla liczb parzystych
-            //pętla zostanie rpzerwana wcześniej, jeżeli wylosowana liczba jest równa 0
-            Parallel.For(0, 1000, (i, loopState) =>
-            {
-                var number = r.Next(7);
-                if (number == 0)
-                {
-                    s += "Stop:";
-                    loopState.Stop();
-                }
-                if (loopState.IsStopped)
-                {
-                    return;
-                }
-                if (number % 2 == 0)
-                {
-                    s += $"{number}; ";
-                    Count(number);
-                    suma += number;
-                    counter++;
-                }
-                else
-                {
-                    s += $"[{number}]; ";
-                }
-            });
-
-            Console.WriteLine("Wylosowane liczby: {0}" +
-                              "\nLiczba pasujących liczb: {1}" +
-                              "\nSuma: {2}" +
-                              "\nŚrednia: {3}"
-                              ,s, counter, suma, (suma / (double)counter));
-
+            var result = action("synchronicznie");
+            Console.WriteLine("Synchronicznie: " + result);
             Console.ReadKey();
         }
 
