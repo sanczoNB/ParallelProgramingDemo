@@ -7,35 +7,44 @@ namespace ParallelProgramingDemo
     {
         static void Main(string[] args)
         {
-            //przygotowanie
-            var size = 10000;
             var r = new Random();
-            double[] tab = new double[size];
-            for (int i = 0; i < tab.Length; i++)
-            {
-                tab[i] = r.Next();
-            }
+            var suma = 0L;
+            var counter = 0L;
+            var s = "";
 
-            //obliczenie sekwencyjne
-            int repeatNumber = 100;
-            double[] result = new double[tab.Length];
-            int start = System.Environment.TickCount;
-
-            for (int repeat = 0; repeat < repeatNumber; repeat++)
+            //iteracje zostaną wykonane tylko dla liczb parzystych
+            //pętla zostanie rpzerwana wcześniej, jeżeli wylosowana liczba jest równa 0
+            Parallel.For(0, 1000, (i, loopState) =>
             {
-                Parallel.For(0, tab.Length, i => result[i] = Count(tab[i]));
-            }
-            int stop = System.Environment.TickCount;
-            Console.WriteLine("Obliczenia sekwenkcyjne trwały {0} ms.", stop - start);
+                var number = r.Next(7);
+                if (number == 0)
+                {
+                    s += "Stop:";
+                    loopState.Stop();
+                }
+                if (loopState.IsStopped)
+                {
+                    return;
+                }
+                if (number % 2 == 0)
+                {
+                    s += $"{number}; ";
+                    Count(number);
+                    suma += number;
+                    counter++;
+                }
+                else
+                {
+                    s += $"[{number}]; ";
+                }
+            });
 
-            /*          
-            //prezentacja wyników
-            Console.WriteLine("Wynik: ");
-            for (var i = 0L; i < tab.Length; i++)
-            {
-                Console.WriteLine("{0}. {1} ?= {2}", i, tab[i], result[i]);
-            }
-            */
+            Console.WriteLine("Wylosowane liczby: {0}" +
+                              "\nLiczba pasujących liczb: {1}" +
+                              "\nSuma: {2}" +
+                              "\nŚrednia: {3}"
+                              ,s, counter, suma, (suma / (double)counter));
+
             Console.ReadKey();
         }
 
